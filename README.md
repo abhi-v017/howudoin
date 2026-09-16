@@ -1,6 +1,6 @@
 <div align="center">
 
-# 💬 Anon Chat
+# 💬 howudoin
 
 ### A full-stack, real-time, anonymous 1:1 chat application
 
@@ -24,7 +24,7 @@ letting two strangers find each other and chat instantly, in real time, with pho
 
 ## 📖 Overview
 
-**Anon Chat** is a production-style messaging platform built to demonstrate a complete, secure,
+**howudoin** is a production-style messaging platform built to demonstrate a complete, secure,
 real-time full-stack architecture — not a toy CRUD app. It intentionally solves a harder problem
 than a typical chat tutorial: **anonymous discovery**. Instead of a public user directory (a privacy
 and abuse risk), users share a private, unguessable 6-character code to connect — the same UX pattern
