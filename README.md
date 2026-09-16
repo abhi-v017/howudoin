@@ -16,7 +16,7 @@ letting two strangers find each other and chat instantly, in real time, with pho
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
-[Live Demo](#-live-demo) · [Screenshots](#-screenshots) · [Features](#-features) · [Architecture](#-architecture) · [Getting Started](#-getting-started)
+[· [Screenshots](#-screenshots) · [Features](#-features) · [Architecture](#-architecture) · [Getting Started](#-getting-started)
 
 </div>
 
@@ -41,18 +41,6 @@ stored in the database or on the app server, keeping the backend stateless and h
 
 ---
 
-## 🚀 Live Demo
-
-| | |
-|---|---|
-| **App** | [your-deployed-url.com](#) *(add your deployed link here)* |
-| **Video walkthrough** | [Watch on Loom / YouTube](#) *(add a 60–90s demo video link here)* |
-| **Test it yourself** | Register two accounts (or use a second incognito window), copy the UID from *Profile*, search it from the other account, and start chatting in real time. |
-
-> Replace the placeholders above once deployed — a live link and a short demo video are the two
-> highest-impact additions you can make to this README for recruiter/hiring-manager review.
-
----
 
 ## 📸 Screenshots
 
@@ -60,11 +48,11 @@ stored in the database or on the app server, keeping the backend stateless and h
 
 | Login | Chat — Light Theme | Chat — Dark Theme |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/login.png" width="260"/> | <img src="docs/screenshots/chat-light.png" width="260"/> | <img src="docs/screenshots/chat-dark.png" width="260"/> |
+| <img src="docs/login.png" width="260"/> | <img src="docs/light-chat-screen.png" width="260"/> | <img src="docs/dark-chat-screen.png" width="260"/> |
 
 | Search by UID | Profile & Avatar Upload | Mobile View |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/search-uid.png" width="260"/> | <img src="docs/screenshots/profile.png" width="260"/> | <img src="docs/screenshots/mobile.png" width="200"/> |
+| <img src="docs/search-user-UID.png" width="260"/> | <img src="docs/profile.png" width="260"/> | <img src="docs/mobile-view.png" width="200"/> |
 
 </div>
 
