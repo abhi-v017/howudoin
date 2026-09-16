@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#FFFFFF"/>
+
+  <!-- 'howudoin' Letter Art Emblem -->
+  <g fill="none" stroke="#6366F1" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bubble Outline -->
+    <path d="M 120 150 
+             C 120 110, 280 110, 280 150 
+             C 280 210, 260 230, 240 230 
+             L 210 265 
+             L 205 230 
+             L 160 230 
+             C 120 230, 120 180, 120 150 Z" />
+
+    <!-- Central 'h' Letterform (Left Stem + Rounded Arch) -->
+    <!-- Tall left stem -->
+    <path d="M 175 140 L 175 200" />
+    
+    <!-- Arch & right leg -->
+    <path d="M 175 170 
+             C 185 152, 220 152, 225 175 
+             L 225 200" />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="200" y="330" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-size="34" 
+        font-weight="700" 
+        letter-spacing="-1" 
+        fill="#6366F1" 
+        text-anchor="middle">
+    howudoin
+  </text>
+</svg>

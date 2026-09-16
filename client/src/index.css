@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Themes ---------- */
+/* Each theme defines the same set of CSS variables; components consume them
+   via Tailwind color tokens (see tailwind.config.js), so switching [data-theme]
+   on <html> re-skins the whole app instantly with no re-render needed. */
+
+:root,
+[data-theme="light"] {
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef0f3;
+  --color-primary: #4f46e5;
+  --color-primary-alt: #4338ca;
+  --color-accent: #06b6d4;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-bubble-me: #4f46e5;
+  --color-bubble-them: #eef0f3;
+  --color-bubble-me-text: #ffffff;
+  --color-bubble-them-text: #111827;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f1115;
+  --color-surface: #171a21;
+  --color-surface-alt: #1f232c;
+  --color-primary: #6366f1;
+  --color-primary-alt: #818cf8;
+  --color-accent: #22d3ee;
+  --color-text: #f3f4f6;
+  --color-text-muted: #9ca3af;
+  --color-border: #2a2e38;
+  --color-bubble-me: #6366f1;
+  --color-bubble-them: #262b35;
+  --color-bubble-me-text: #ffffff;
+  --color-bubble-them-text: #f3f4f6;
+}
+
+[data-theme="ocean"] {
+  --color-bg: #f0f9ff;
+  --color-surface: #ffffff;
+  --color-surface-alt: #e0f2fe;
+  --color-primary: #0284c7;
+  --color-primary-alt: #0369a1;
+  --color-accent: #14b8a6;
+  --color-text: #0c2436;
+  --color-text-muted: #52708a;
+  --color-border: #bae6fd;
+  --color-bubble-me: #0284c7;
+  --color-bubble-them: #e0f2fe;
+  --color-bubble-me-text: #ffffff;
+  --color-bubble-them-text: #0c2436;
+}
+
+[data-theme="sunset"] {
+  --color-bg: #fff7ed;
+  --color-surface: #ffffff;
+  --color-surface-alt: #ffedd5;
+  --color-primary: #ea580c;
+  --color-primary-alt: #c2410c;
+  --color-accent: #ec4899;
+  --color-text: #431407;
+  --color-text-muted: #92725f;
+  --color-border: #fed7aa;
+  --color-bubble-me: #ea580c;
+  --color-bubble-them: #ffedd5;
+  --color-bubble-me-text: #ffffff;
+  --color-bubble-them-text: #431407;
+}
+
+[data-theme="forest"] {
+  --color-bg: #f0fdf4;
+  --color-surface: #ffffff;
+  --color-surface-alt: #dcfce7;
+  --color-primary: #16a34a;
+  --color-primary-alt: #15803d;
+  --color-accent: #84cc16;
+  --color-text: #052e16;
+  --color-text-muted: #557a63;
+  --color-border: #bbf7d0;
+  --color-bubble-me: #16a34a;
+  --color-bubble-them: #dcfce7;
+  --color-bubble-me-text: #ffffff;
+  --color-bubble-them-text: #052e16;
+}
+
+[data-theme="midnight"] {
+  --color-bg: #05060a;
+  --color-surface: #0d0f16;
+  --color-surface-alt: #14161f;
+  --color-primary: #a855f7;
+  --color-primary-alt: #9333ea;
+  --color-accent: #f472b6;
+  --color-text: #ede9fe;
+  --color-text-muted: #8b87a3;
+  --color-border: #1f2130;
+  --color-bubble-me: #a855f7;
+  --color-bubble-them: #191c28;
+  --color-bubble-me-text: #ffffff;
+  --color-bubble-them-text: #ede9fe;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Inter", system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* thin scrollbars, theme-aware */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 9999px;
+}

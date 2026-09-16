@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": { ".read": false, ".write": false },
+    "emailIndex": { ".read": false, ".write": false },
+    "chats": { ".read": false, ".write": false },
+    "userChats": { ".read": false, ".write": false }
+  }
+}
