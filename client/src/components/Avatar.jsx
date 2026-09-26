@@ -5,16 +5,16 @@ export default function Avatar({ user, size = 40, online }) {
   const style = { width: size, height: size };
 
   return (
-    <div className="relative shrink-0" style={style}>
+    <div className="relative shrink-0 rounded-full shadow-clay-avatar bg-surface p-0.5" style={style}>
       {user?.avatarUrl ? (
         <img
           src={user.avatarUrl}
           alt={user.username}
-          className="w-full h-full rounded-full object-cover border border-border"
+          className="w-full h-full rounded-full object-cover"
         />
       ) : (
         <div
-          className="w-full h-full rounded-full bg-primary text-bubbleMe-text flex items-center justify-center font-semibold border border-border"
+          className="w-full h-full rounded-full bg-surface-alt text-primary flex items-center justify-center font-bold"
           style={{ fontSize: size * 0.38 }}
         >
           {initials}

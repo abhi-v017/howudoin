@@ -134,27 +134,27 @@ export default function ChatWindow({ chat, onBack, onlineMap, onNewMessage }) {
   const isOnline = !!onlineMap?.[partner.uid];
 
   return (
-    <div className="flex flex-col h-full bg-bg">
+    <div className="flex flex-col h-full bg-surface rounded-[2rem]">
       {/* Header */}
-      <div className="flex items-center gap-3 px-3 py-2.5 border-b border-border bg-surface">
+      <div className="flex items-center gap-4 px-6 py-5 bg-surface z-10 shadow-clay-card rounded-t-[2rem]">
         <button
           onClick={onBack}
-          className="md:hidden text-text-muted hover:text-text px-1"
+          className="md:hidden w-10 h-10 rounded-full flex items-center justify-center bg-surface shadow-clay-btn text-text hover:shadow-clay-btn-active"
           aria-label="Back"
         >
           ←
         </button>
-        <Avatar user={partner} size={38} online={isOnline} />
+        <Avatar user={partner} size={44} online={isOnline} />
         <div className="min-w-0">
-          <p className="text-sm font-semibold truncate">{partner.username}</p>
+          <p className="text-base font-bold truncate text-text">{partner.username}</p>
           <p className="text-xs text-text-muted truncate">
-            {partnerTyping ? "typing…" : isOnline ? "online" : `UID: ${partner.uid}`}
+            {partnerTyping ? "Typing…" : isOnline ? "Online" : `UID: ${partner.uid}`}
           </p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto py-3">
+      <div className="flex-1 overflow-y-auto py-4 px-3">
         {loading ? (
           <p className="text-center text-sm text-text-muted mt-8">Loading messages…</p>
         ) : messages.length === 0 ? (
@@ -170,43 +170,45 @@ export default function ChatWindow({ chat, onBack, onlineMap, onNewMessage }) {
       </div>
 
       {/* Composer */}
-      <form
-        onSubmit={handleSend}
-        className="flex items-center gap-2 p-2.5 border-t border-border bg-surface"
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,video/*"
-          className="hidden"
-          onChange={handleFilePick}
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-text-muted hover:bg-surface-alt transition disabled:opacity-50"
-          title="Share photo or video"
+      <div className="p-4 bg-surface rounded-b-[2rem]">
+        <form
+          onSubmit={handleSend}
+          className="flex items-center gap-3 p-2 rounded-full bg-surface shadow-clay-input"
         >
-          {uploading ? "…" : "📎"}
-        </button>
-        <input
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            emitTyping();
-          }}
-          placeholder="Type a message"
-          className="flex-1 min-w-0 px-3.5 py-2.5 rounded-full bg-surface-alt border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <button
-          type="submit"
-          disabled={!text.trim()}
-          className="shrink-0 px-4 py-2.5 rounded-full bg-primary text-bubbleMe-text text-sm font-medium hover:bg-primary-alt transition disabled:opacity-50"
-        >
-          Send
-        </button>
-      </form>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={handleFilePick}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-text bg-surface shadow-clay-btn hover:shadow-clay-btn-active transition disabled:opacity-50"
+            title="Share photo or video"
+          >
+            {uploading ? "…" : "📎"}
+          </button>
+          <input
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value);
+              emitTyping();
+            }}
+            placeholder="Type a message..."
+            className="flex-1 min-w-0 px-3 py-2 bg-transparent text-text placeholder-text-muted text-sm focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={!text.trim()}
+            className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center bg-primary text-white shadow-clay-btn hover:shadow-clay-btn-active text-sm transition disabled:opacity-50"
+          >
+            ➤
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

@@ -48,7 +48,7 @@ stored in the database or on the app server, keeping the backend stateless and h
 
 | Login | Chat — Light Theme | Chat — Dark Theme |
 |:---:|:---:|:---:|
-| <img src="docs/login.png" width="260"/> | <img src="docs/light-chat-screen.png" width="260"/> | <img src="docs/dark-chat-screen.png" width="260"/> |
+| <img src="docs/login.png" width="260"/> | <img src="docs/dark-chat-screen.png" width="260"/> |
 
 | Search by UID | Profile & Avatar Upload | Mobile View |
 |:---:|:---:|:---:|

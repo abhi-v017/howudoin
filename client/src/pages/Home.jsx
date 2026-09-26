@@ -7,7 +7,6 @@ import Avatar from "../components/Avatar.jsx";
 import ChatList from "../components/ChatList.jsx";
 import ChatWindow from "../components/ChatWindow.jsx";
 import SearchUser from "../components/SearchUser.jsx";
-import ThemeSwitcher from "../components/ThemeSwitcher.jsx";
 
 export default function Home() {
   const { user } = useAuth();
@@ -88,22 +87,23 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen flex bg-bg overflow-hidden">
+    <div className="h-screen flex bg-bg overflow-hidden p-2 md:p-4 gap-4">
       {/* Sidebar */}
       <div
-        className={`w-full md:w-80 lg:w-96 shrink-0 border-r border-border bg-surface flex-col ${
+        className={`w-full md:w-80 lg:w-96 shrink-0 bg-surface rounded-[2rem] shadow-clay-card flex-col overflow-hidden ${
           showListOnMobile ? "flex" : "hidden md:flex"
         }`}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <Link to="/profile" className="flex items-center gap-2 min-w-0">
-            <Avatar user={user} size={36} />
-            <span className="text-sm font-semibold truncate">{user.username}</span>
+        <div className="flex items-center justify-between px-6 py-5 bg-surface z-10 rounded-t-[2rem]">
+          <Link to="/profile" className="flex items-center gap-3 min-w-0">
+            <Avatar user={user} size={42} />
+            <span className="text-lg font-bold text-text truncate">Chats</span>
           </Link>
-          <ThemeSwitcher />
         </div>
 
-        <SearchUser onStartChat={handleStartChat} />
+        <div className="px-4 pb-2">
+          <SearchUser onStartChat={handleStartChat} />
+        </div>
 
         {loading ? (
           <p className="text-center text-sm text-text-muted mt-8">Loading chats…</p>
@@ -118,7 +118,11 @@ export default function Home() {
       </div>
 
       {/* Chat window */}
-      <div className={`flex-1 flex-col ${showListOnMobile ? "hidden md:flex" : "flex"}`}>
+      <div
+        className={`flex-1 flex-col bg-surface rounded-[2rem] shadow-clay-card overflow-hidden ${
+          showListOnMobile ? "hidden md:flex" : "flex"
+        }`}
+      >
         {activeChat ? (
           <ChatWindow
             chat={activeChat}
@@ -126,7 +130,7 @@ export default function Home() {
             onBack={() => setShowListOnMobile(true)}
           />
         ) : (
-          <div className="flex-1 hidden md:flex items-center justify-center text-text-muted text-sm">
+          <div className="flex-1 hidden md:flex items-center justify-center text-text-muted text-sm bg-surface">
             Select a conversation or search a UID to start chatting
           </div>
         )}

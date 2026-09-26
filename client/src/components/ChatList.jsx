@@ -23,7 +23,7 @@ export default function ChatList({ chats, activeChatId, onSelect, onlineMap }) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto px-2 py-2 space-y-2">
       {chats.map((chat) => {
         const partner = chat.partner || {};
         const isActive = chat.chatId === activeChatId;
@@ -31,14 +31,14 @@ export default function ChatList({ chats, activeChatId, onSelect, onlineMap }) {
           <button
             key={chat.chatId}
             onClick={() => onSelect(chat)}
-            className={`w-full flex items-center gap-3 px-3 py-3 text-left border-b border-border hover:bg-surface-alt transition ${
-              isActive ? "bg-surface-alt" : ""
+            className={`w-full flex items-center gap-4 px-4 py-3 text-left rounded-2xl transition ${
+              isActive ? "bg-surface shadow-clay-input" : "hover:bg-surface/50 hover:shadow-clay-card"
             }`}
           >
-            <Avatar user={partner} size={44} online={onlineMap?.[chat.withUid]} />
+            <Avatar user={partner} size={50} online={onlineMap?.[chat.withUid]} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium truncate">{partner.username || "Unknown"}</p>
+                <p className="text-sm font-medium text-text truncate">{partner.username || "Unknown"}</p>
                 <span className="text-[11px] text-text-muted shrink-0">
                   {timeAgo(chat.lastTimestamp)}
                 </span>

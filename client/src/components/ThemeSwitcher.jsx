@@ -20,18 +20,18 @@ export default function ThemeSwitcher() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-surface text-sm hover:bg-surface-alt transition"
+        className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-surface text-sm text-text shadow-clay-btn hover:shadow-clay-btn-active transition"
         title="Change theme"
       >
         <span
-          className="w-3.5 h-3.5 rounded-full border border-border"
+          className="w-3.5 h-3.5 rounded-full shadow-clay-input"
           style={{ backgroundColor: current?.swatch }}
         />
         <span className="hidden sm:inline">{current?.label}</span>
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-surface border border-border rounded-xl shadow-lg overflow-hidden z-50">
+        <div className="absolute right-0 mt-2 w-44 bg-surface rounded-2xl shadow-clay-card overflow-hidden z-50 py-2">
           {themes.map((t) => (
             <button
               key={t.id}
@@ -39,12 +39,12 @@ export default function ThemeSwitcher() {
                 setTheme(t.id);
                 setOpen(false);
               }}
-              className={`flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-surface-alt transition ${
-                t.id === theme ? "font-semibold" : ""
+              className={`flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-text hover:bg-surface-alt transition ${
+                t.id === theme ? "font-semibold shadow-clay-input" : ""
               }`}
             >
               <span
-                className="w-3.5 h-3.5 rounded-full border border-border"
+                className="w-3.5 h-3.5 rounded-full shadow-clay-input"
                 style={{ backgroundColor: t.swatch }}
               />
               {t.label}
