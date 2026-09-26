@@ -46,7 +46,7 @@ stored in the database or on the app server, keeping the backend stateless and h
 
 <div align="center">
 
-| Login | Chat — Light Theme | Chat — Dark Theme |
+| Login | Chat — Dark Theme |
 |:---:|:---:|:---:|
 | <img src="docs/login.png" width="260"/> | <img src="docs/dark-chat-screen.png" width="260"/> |
 
