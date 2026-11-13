@@ -2,7 +2,8 @@
 
 import React, { useEffect, useRef } from "react";
 import { useCall } from "@/context/CallContext";
-import { Mic, MicOff, Video, VideoOff, PhoneOff, Minimize2, Radio } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Minimize2 } from "lucide-react";
+import { LogoLoader } from "@/components/ui/LogoLoader";
 
 export function CallOverlay() {
   const {
@@ -64,14 +65,14 @@ export function CallOverlay() {
               className="w-full h-full object-cover"
             />
           ) : (
-            // Voice Wave Visualization Stage
-            <div className="flex flex-col items-center justify-center gap-3 p-4">
-              <div className="w-16 h-16 rounded-full glass-panel flex items-center justify-center border border-white/10 shadow-lg">
-                <Radio className="w-8 h-8 text-white animate-pulse" />
-              </div>
-              <span className="text-xs font-medium text-zinc-300">
-                P2P Encrypted Voice Stream
-              </span>
+            // Voice Wave & Logo Stage
+            <div className="flex flex-col items-center justify-center w-full h-full p-2">
+              <LogoLoader
+                variant="call"
+                size={42}
+                label="P2P Encrypted Voice"
+                sublabel="Secure peer-to-peer audio tunnel"
+              />
             </div>
           )}
 

@@ -35,8 +35,8 @@ export function UserProfileDock() {
           />
           {/* Socket connectivity status dot */}
           <span
-            className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-black ${
-              isConnected ? "bg-emerald-400 shadow-[0_0_8px_#34d399]" : "bg-amber-400"
+            className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-black ${
+              isConnected ? "bg-emerald-400" : "bg-amber-400"
             }`}
             title={isConnected ? "Realtime Socket Active" : "Reconnecting..."}
           />

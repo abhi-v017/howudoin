@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { Conversation } from "@/types";
-import { X, Search, UserPlus, Users, ArrowRight, Loader2 } from "lucide-react";
+import { X, Search, UserPlus, Users, ArrowRight } from "lucide-react";
+import { LogoLoader } from "@/components/ui/LogoLoader";
 
 interface NewChatModalProps {
   isOpen: boolean;
@@ -152,7 +153,9 @@ export function NewChatModal({ isOpen, onClose, onConversationCreated }: NewChat
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-white/30"
                 />
                 {isSearching && (
-                  <Loader2 className="w-4 h-4 text-zinc-400 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                    <LogoLoader variant="inline" size={16} />
+                  </div>
                 )}
               </div>
             </div>
@@ -229,7 +232,11 @@ export function NewChatModal({ isOpen, onClose, onConversationCreated }: NewChat
                 color: "var(--accent-text)",
               }}
             >
-              {isCreatingGroup ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Create Group</span>}
+              {isCreatingGroup ? (
+                <LogoLoader variant="inline" size={16} label="Creating room..." />
+              ) : (
+                <span>Create Group</span>
+              )}
             </button>
           </form>
         )}

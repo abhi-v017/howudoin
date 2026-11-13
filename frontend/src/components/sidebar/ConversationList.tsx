@@ -5,7 +5,8 @@ import { Conversation } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { useSocket } from "@/context/SocketContext";
 import { formatDate } from "@/lib/utils";
-import { Plus, Search, MessageSquare, Users } from "lucide-react";
+import { Plus, Search, Users } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 import { NewChatModal } from "./NewChatModal";
 
 interface ConversationListProps {
@@ -62,7 +63,7 @@ export function ConversationList({
       <div className="flex-1 overflow-y-auto space-y-1 pr-1">
         {filteredConversations.length === 0 ? (
           <div className="h-48 flex flex-col items-center justify-center text-center p-4 text-zinc-500">
-            <MessageSquare className="w-7 h-7 mb-2 stroke-1 text-zinc-600" />
+            <Logo size="sm" className="opacity-40 mb-2" />
             <p className="text-xs">No chats yet</p>
             <button
               onClick={() => setIsModalOpen(true)}

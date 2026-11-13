@@ -9,7 +9,9 @@ import { api } from "@/lib/api";
 import { MessageBubble } from "./MessageBubble";
 import { MessageInput } from "./MessageInput";
 import { TypingIndicator } from "./TypingIndicator";
-import { Phone, Video, ArrowLeft, MessageSquare, ShieldCheck } from "lucide-react";
+import { Phone, Video, ArrowLeft, ShieldCheck } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+import { LogoLoader } from "@/components/ui/LogoLoader";
 
 interface ChatStageProps {
   conversation: Conversation | null;
@@ -149,13 +151,19 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
 
   if (!conversation) {
     return (
-      <div className="flex-1 h-full flex flex-col items-center justify-center p-8 text-center bg-black/30 backdrop-blur-xl">
-        <div className="w-16 h-16 rounded-3xl glass-pill flex items-center justify-center mb-4 text-zinc-500">
-          <MessageSquare className="w-8 h-8 stroke-1 text-zinc-400" />
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-8 text-center bg-black/30 backdrop-blur-xl select-none">
+        <div className="mb-4">
+          <Logo size="xl" />
         </div>
-        <h3 className="text-xl font-bold text-white mb-1.5">Select a Chat</h3>
+        <h3 className="text-xl font-bold text-white mb-1.5 font-mono tracking-wider flex items-center gap-1.5">
+          <span>howudoin</span>
+          <span
+            className="w-2 h-2 rounded-full inline-block animate-pulse"
+            style={{ backgroundColor: "var(--accent-color)" }}
+          />
+        </h3>
         <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
-          Choose a conversation from the left or click <strong>"+ New"</strong> to connect with an anonymous peer.
+          Select a chat from the left or click <strong>&quot;+ New&quot;</strong> to begin an anonymous, encrypted conversation.
         </p>
       </div>
     );
@@ -249,8 +257,8 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
         className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2"
       >
         {isLoading ? (
-          <div className="h-full flex items-center justify-center text-xs text-zinc-500">
-            Loading messages...
+          <div className="h-full flex items-center justify-center">
+            <LogoLoader variant="stage" label="Retrieving messages..." sublabel="Decrypted on-device" />
           </div>
         ) : messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-500">

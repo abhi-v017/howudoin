@@ -97,15 +97,71 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Ambient Radial Glow Background */
+/* Clean OLED Pitch Black Background */
 .ambient-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(circle 800px at 15% 15%, var(--accent-soft), transparent 80%),
-              radial-gradient(circle 600px at 85% 85%, rgba(255, 255, 255, 0.02), transparent 70%);
+  display: none;
+}
+
+/* ========================================================
+   CLASSY LOGO VECTOR COMPLETION & ROTATION ANIMATIONS
+   (Zero fuzzy AI glows. Pure precision geometry & motion)
+   ======================================================== */
+@keyframes logo-draw-completion {
+  0% {
+    stroke-dashoffset: 1800;
+  }
+  48% {
+    stroke-dashoffset: 0;
+  }
+  68% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1800;
+  }
+}
+
+@keyframes logo-draw-continuous {
+  0% {
+    stroke-dashoffset: 1800;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes logo-rotate-classy {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes logo-tilt-classy {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+.animate-logo-draw {
+  stroke-dasharray: 1800;
+  animation: logo-draw-completion 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.animate-logo-draw-loop {
+  stroke-dasharray: 1800;
+  animation: logo-draw-continuous 2s linear infinite;
+}
+
+.animate-logo-rotate {
+  animation: logo-rotate-classy 8s linear infinite;
+}
+
+.animate-logo-tilt {
+  animation: logo-tilt-classy 3s ease-in-out infinite;
 }

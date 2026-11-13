@@ -9,6 +9,11 @@ import { CallOverlay } from "@/components/webrtc/CallOverlay";
 export const metadata: Metadata = {
   title: "howudoin | Anonymous Realtime Chat",
   description: "Private, anonymous realtime chat with WebSockets, WebRTC voice/video, and media sharing.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,9 +30,6 @@ export default function RootLayout({
         <AuthProvider>
           <SocketProvider>
             <CallProvider>
-              {/* Global Ambient Glow */}
-              <div className="ambient-glow" />
-
               {/* WebRTC Realtime Notifications & Call Screen */}
               <IncomingCallBanner />
               <CallOverlay />

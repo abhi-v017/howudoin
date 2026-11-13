@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Shield, Sparkles, Key, User as UserIcon, ArrowRight, Loader2 } from "lucide-react";
+import { Sparkles, Key, User as UserIcon, ArrowRight } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+import { LogoLoader } from "@/components/ui/LogoLoader";
 
 const CODENAMES = ["Shadow", "Phantom", "Ghost", "Viper", "Nexus", "Cipher", "Nova", "Apex", "Mirage", "Spectre", "Krypton", "Zenith"];
 
@@ -53,22 +55,20 @@ export function AuthModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div className="w-full max-w-md glass-panel p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
-        {/* Ambient Top Glow */}
-        <div
-          className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-32 rounded-full blur-3xl pointer-events-none opacity-40"
-          style={{ backgroundColor: "var(--accent-color)" }}
-        />
-
-        {/* Header */}
-        <div className="text-center mb-6 relative z-10">
-          <div className="inline-flex p-3 rounded-2xl glass-pill mb-3 text-white">
-            <Shield className="w-7 h-7" style={{ color: "var(--accent-color)" }} />
+        {/* Header with Custom Logo */}
+        <div className="text-center mb-6 relative z-10 flex flex-col items-center">
+          <div className="mb-3">
+            <Logo size="xl" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">
-            Private &amp; Anonymous Chat
+          <h2 className="text-2xl font-bold tracking-tight text-white font-mono flex items-center gap-1.5">
+            <span>howudoin</span>
+            <span
+              className="w-2 h-2 rounded-full inline-block animate-pulse"
+              style={{ backgroundColor: "var(--accent-color)" }}
+            />
           </h2>
-          <p className="text-sm text-zinc-400 mt-1">
-            Zero emails. Zero phone numbers. Complete identity anonymity.
+          <p className="text-xs text-zinc-400 mt-1 max-w-xs">
+            Zero emails. Zero phone numbers. Pure encrypted anonymity.
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export function AuthModal() {
               }}
             >
               {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <LogoLoader variant="inline" size={18} label="Generating identity..." />
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
@@ -179,7 +179,7 @@ export function AuthModal() {
               }}
             >
               {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <LogoLoader variant="inline" size={18} label="Authenticating..." />
               ) : (
                 <>
                   <span>{tab === "login" ? "Log In" : "Create Account"}</span>

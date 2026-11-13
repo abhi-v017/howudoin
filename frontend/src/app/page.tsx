@@ -9,7 +9,8 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { UserProfileDock } from "@/components/sidebar/UserProfileDock";
 import { ConversationList } from "@/components/sidebar/ConversationList";
 import { ChatStage } from "@/components/chat/ChatStage";
-import { Loader2 } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+import { LogoLoader } from "@/components/ui/LogoLoader";
 
 export default function Home() {
   const { user, token, isLoading } = useAuth();
@@ -76,9 +77,11 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center bg-black">
-        <Loader2 className="w-8 h-8 text-white/50 animate-spin" />
-      </div>
+      <LogoLoader
+        variant="fullscreen"
+        label="howudoin"
+        sublabel="Initializing secure chat space..."
+      />
     );
   }
 
@@ -95,6 +98,14 @@ export default function Home() {
             activeConversation ? "hidden md:flex" : "flex"
           }`}
         >
+          {/* Brand Header */}
+          <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between flex-shrink-0 bg-black/40">
+            <Logo size="sm" withText />
+            <span className="text-[10px] font-mono tracking-widest px-2 py-0.5 rounded-full glass-pill text-zinc-400 border border-white/5">
+              ANONYMOUS • P2P
+            </span>
+          </div>
+
           {/* User Profile & Theme Dock */}
           <div className="p-3 border-b border-white/10 flex-shrink-0">
             <UserProfileDock />
