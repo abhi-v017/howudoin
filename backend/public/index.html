@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatApp Core Backend Diagnostics & Testing Playground</title>
+  <link rel="stylesheet" href="/style.css">
+  <!-- Socket.io client (served directly from local backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">
+      <span class="pulse-dot"></span>
+      <h1>ChatApp <span>Core Backend</span></h1>
+      <span class="badge" id="env-badge">v1.0.0</span>
+    </div>
+    <div class="nav-right">
+      <div class="latency-pill" id="latency-pill">
+        <span>Latency:</span> <strong id="api-latency">-- ms</strong>
+      </div>
+      <button class="theme-btn" id="theme-toggle" title="Switch Theme">🌙</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Server Status & Diagnostics Grid -->
+    <section class="card status-grid">
+      <div class="status-item">
+        <div class="status-header">
+          <span class="indicator" id="ind-api"></span>
+          <h3>API Server</h3>
+        </div>
+        <p class="status-val" id="val-api">Checking...</p>
+        <span class="sub-text" id="val-uptime">Uptime: --</span>
+      </div>
+
+      <div class="status-item">
+        <div class="status-header">
+          <span class="indicator" id="ind-db"></span>
+          <h3>PostgreSQL (SQL)</h3>
+        </div>
+        <p class="status-val" id="val-db">Checking...</p>
+        <span class="sub-text" id="val-db-latency">DB Latency: -- ms</span>
+      </div>
+
+      <div class="status-item">
+        <div class="status-header">
+          <span class="indicator" id="ind-redis"></span>
+          <h3>Redis Cache & PubSub</h3>
+        </div>
+        <p class="status-val" id="val-redis">Checking...</p>
+        <span class="sub-text" id="val-redis-latency">Redis Latency: -- ms</span>
+      </div>
+
+      <div class="status-item">
+        <div class="status-header">
+          <span class="indicator" id="ind-ws"></span>
+          <h3>WebSocket (Socket.io)</h3>
+        </div>
+        <p class="status-val" id="val-ws">Disconnected</p>
+        <span class="sub-text" id="val-ws-users">Active Connections: 0</span>
+      </div>
+    </section>
+
+    <!-- Main Playground Columns -->
+    <div class="playground-layout">
+      <!-- Left Column: Auth & User Profile -->
+      <section class="card">
+        <h2>🔒 Anonymous Identity & Auth</h2>
+        <p class="section-desc">Zero emails, zero phone numbers. Pure anonymity with Unique IDs &amp; Discriminator Tags.</p>
+
+        <div class="tab-group">
+          <button class="tab-btn active" data-tab="tab-quick-reg">Quick Generate</button>
+          <button class="tab-btn" data-tab="tab-login">Login</button>
+          <button class="tab-btn" data-tab="tab-manual-reg">Custom Register</button>
+        </div>
+
+        <!-- Quick Register -->
+        <div class="tab-content active" id="tab-quick-reg">
+          <p class="hint">Instantly generate a random anonymous identity (e.g. <code>Phantom</code> with ID <code>phantom_4921</code>):</p>
+          <button class="btn btn-primary" id="btn-quick-anon">⚡ Generate Random Anonymous User</button>
+        </div>
+
+        <!-- Login -->
+        <div class="tab-content" id="tab-login">
+          <div class="form-group">
+            <label>Username or Unique ID:</label>
+            <input type="text" id="login-username" placeholder="e.g. abekrox or abekrox_1971">
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="login-password" placeholder="••••••••">
+          </div>
+          <button class="btn btn-secondary" id="btn-login">Login</button>
+        </div>
+
+        <!-- Custom Register -->
+        <div class="tab-content" id="tab-manual-reg">
+          <div class="form-group">
+            <label>Desired Username:</label>
+            <input type="text" id="reg-username" placeholder="Letters, numbers, underscores">
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="reg-password" placeholder="At least 6 characters">
+          </div>
+          <button class="btn btn-primary" id="btn-register">Register</button>
+        </div>
+
+        <!-- Active Identity Card -->
+        <div class="active-user-card" id="active-user-box" style="display: none;">
+          <div class="user-meta">
+            <img id="user-avatar" src="" alt="Avatar" class="avatar">
+            <div>
+              <div class="user-display-name" id="user-display-name">Username</div>
+              <div class="user-id-code" id="user-id">Unique ID: --</div>
+            </div>
+          </div>
+          <div class="token-container">
+            <label>Session JWT Token:</label>
+            <div class="token-copy-box">
+              <input type="text" id="user-token" readonly>
+              <button class="btn-copy" id="btn-copy-token">Copy</button>
+            </div>
+          </div>
+          <div class="user-actions">
+            <button class="btn btn-danger btn-sm" id="btn-logout">Logout</button>
+            <button class="btn btn-outline btn-sm" id="btn-connect-ws">Connect Socket</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Center & Right: Realtime Messaging & WebRTC Playground -->
+      <section class="card">
+        <h2>💬 Realtime Chat &amp; Conversations</h2>
+        <p class="section-desc">Test 1-on-1 direct messages, group chats, typing indicators, and media sharing.</p>
+
+        <!-- Conversation Selector / Creator -->
+        <div class="chat-controls">
+          <div class="conv-create-bar">
+            <input type="text" id="direct-recipient" placeholder="Recipient (Username or Unique ID e.g. Spectre or spectre_2318)">
+            <button class="btn btn-secondary btn-sm" id="btn-start-direct">Start 1-on-1</button>
+            <button class="btn btn-outline btn-sm" id="btn-create-group">+ New Group</button>
+          </div>
+          <div class="active-conv-indicator" id="active-conv-banner">
+            Active Chat: <strong id="active-conv-title">None selected</strong>
+          </div>
+        </div>
+
+        <!-- Message Box -->
+        <div class="chat-messages-container" id="chat-messages">
+          <div class="chat-placeholder">Select or start a conversation to view and send messages.</div>
+        </div>
+
+        <!-- Typing status -->
+        <div class="typing-indicator" id="typing-box" style="display: none;">
+          <span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>
+          <span id="typing-text">Someone is typing...</span>
+        </div>
+
+        <!-- Message Input Bar -->
+        <div class="chat-input-bar">
+          <label class="btn-attach" title="Upload Media (Images, Audio, Video, Docs)">
+            📎
+            <input type="file" id="media-file-input" style="display: none;">
+          </label>
+          <input type="text" id="chat-input" placeholder="Type a realtime message..." disabled>
+          <button class="btn btn-primary" id="btn-send-message" disabled>Send</button>
+        </div>
+
+        <!-- Uploading progress & status -->
+        <div class="upload-status" id="upload-status" style="display: none;">
+          <span id="upload-status-text">Uploading file...</span>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        </div>
+      </section>
+
+      <!-- WebRTC & Live Events Inspector -->
+      <section class="card">
+        <h2>📹 WebRTC Voice/Video &amp; Live Logs</h2>
+        <p class="section-desc">Inspect real-time signaling (Offer, Answer, ICE Candidates) &amp; Socket events.</p>
+
+        <!-- WebRTC Quick Test Controls -->
+        <div class="webrtc-box">
+          <div class="call-controls">
+            <button class="btn btn-outline btn-sm" id="btn-call-voice" disabled>📞 Voice Call</button>
+            <button class="btn btn-outline btn-sm" id="btn-call-video" disabled>📹 Video Call</button>
+            <button class="btn btn-danger btn-sm" id="btn-end-call" style="display: none;">End Call</button>
+          </div>
+          <div class="call-status-banner" id="call-status-banner">Call Status: Idle</div>
+        </div>
+
+        <!-- Incoming Call Modal / Banner -->
+        <div class="incoming-call-box" id="incoming-call-box" style="display: none;">
+          <div class="incoming-call-title">🔔 Incoming <span id="incoming-call-type">AUDIO</span> Call!</div>
+          <div class="incoming-caller" id="incoming-caller-name">Caller: Shadow#1024</div>
+          <div class="incoming-actions">
+            <button class="btn btn-primary btn-sm" id="btn-accept-call">Accept</button>
+            <button class="btn btn-danger btn-sm" id="btn-reject-call">Decline</button>
+          </div>
+        </div>
+
+        <!-- Live Socket Event Logs -->
+        <div class="logs-container">
+          <div class="logs-header">
+            <span>Live WebSocket &amp; System Event Stream</span>
+            <button class="btn-clear" id="btn-clear-logs">Clear</button>
+          </div>
+          <div class="logs-content" id="event-logs">
+            <div class="log-entry info">[System] Playground ready. Initializing diagnostics...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

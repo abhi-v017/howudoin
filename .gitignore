@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production builds & Next.js cache
+dist/
+*/dist/
+.next/
+*/.next/
+out/
+*/out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+backend/.env
+frontend/.env.local
+
+# Media Uploads (preserve directory structure via .gitkeep)
+uploads/*
+!uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+powershell.bat

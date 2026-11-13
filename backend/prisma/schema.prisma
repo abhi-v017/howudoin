@@ -1,0 +1,163 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  SYSTEM
+}
+
+enum DeliveryStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+enum CallType {
+  AUDIO
+  VIDEO
+}
+
+enum CallStatus {
+  INITIATED
+  RINGING
+  ONGOING
+  COMPLETED
+  REJECTED
+  MISSED
+}
+
+model User {
+  id           String   @id // Short unique ID derived from username, e.g. "abekrox_1971"
+  username     String   @db.VarChar(50)
+  tag          String   @db.VarChar(10) // e.g., "7482" for "username#7482"
+  passwordHash String
+  avatarUrl    String?
+  bio          String?  @default("Hey there! I am using this private chat app.")
+  theme        String   @default("dark") // "dark", "light", "cyberpunk", "midnight"
+  isOnline     Boolean  @default(false)
+  lastSeen     DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  memberships         ConversationMember[]
+  sentMessages        Message[]
+  createdConversations Conversation[]        @relation("CreatedConversations")
+  readReceipts        MessageReceipt[]
+  initiatedCalls      CallSession[]         @relation("CallerUser")
+  receivedCalls       CallSession[]         @relation("ReceiverUser")
+
+  @@unique([username, tag])
+  @@index([username])
+}
+
+model Conversation {
+  id          String           @id @default(uuid())
+  type        ConversationType @default(DIRECT)
+  title       String?          @db.VarChar(100) // For group chats
+  description String?          @db.VarChar(255)
+  avatarUrl   String?
+  creatorId   String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  creator      User?                @relation("CreatedConversations", fields: [creatorId], references: [id], onDelete: SetNull)
+  members      ConversationMember[]
+  messages     Message[]
+  callSessions CallSession[]
+
+  @@index([createdAt])
+}
+
+model ConversationMember {
+  id             String     @id @default(uuid())
+  conversationId String
+  userId         String
+  role           MemberRole @default(MEMBER)
+  joinedAt       DateTime   @default(now())
+  muted          Boolean    @default(false)
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id             String      @id @default(uuid())
+  conversationId String
+  senderId       String
+  type           MessageType @default(TEXT)
+  content        String?     @db.Text
+  mediaUrl       String?
+  mediaName      String?
+  mediaSize      Int?
+  mediaMimeType  String?
+  replyToId      String?
+  isEdited       Boolean     @default(false)
+  isDeleted      Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  conversation Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User             @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  replyTo      Message?         @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      Message[]        @relation("MessageReplies")
+  receipts     MessageReceipt[]
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+}
+
+model MessageReceipt {
+  id        String         @id @default(uuid())
+  messageId String
+  userId    String
+  status    DeliveryStatus @default(SENT)
+  updatedAt DateTime       @default(now()) @updatedAt
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId])
+}
+
+model CallSession {
+  id             String     @id @default(uuid())
+  conversationId String
+  callerId       String
+  receiverId     String? // null for group calls
+  callType       CallType   @default(AUDIO)
+  status         CallStatus @default(INITIATED)
+  startedAt      DateTime   @default(now())
+  endedAt        DateTime?
+  durationSec    Int        @default(0)
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  caller       User         @relation("CallerUser", fields: [callerId], references: [id], onDelete: Cascade)
+  receiver     User?        @relation("ReceiverUser", fields: [receiverId], references: [id], onDelete: SetNull)
+
+  @@index([conversationId])
+}
