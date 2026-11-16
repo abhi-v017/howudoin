@@ -13,7 +13,9 @@ let ioInstance: Server | null = null;
 export function initSocketServer(httpServer: HttpServer): Server {
   const io = new Server(httpServer, {
     cors: {
-      origin: '*', // Allow development frontend and diagnostics test page
+      origin: (requestOrigin, callback) => {
+        callback(null, requestOrigin || true);
+      },
       methods: ['GET', 'POST'],
       credentials: true,
     },

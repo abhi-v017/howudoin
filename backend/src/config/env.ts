@@ -11,6 +11,7 @@ export const config = {
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
   jwtSecret: process.env.JWT_SECRET || 'super-secret-jwt-key-replace-in-production-chatapp-2026',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   maxFileSizeMb: parseInt(process.env.MAX_FILE_SIZE_MB || '25', 10),
   uploadDir: process.env.UPLOAD_DIR || path.resolve(__dirname, '../../uploads'),
 };

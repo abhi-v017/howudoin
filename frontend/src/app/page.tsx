@@ -80,13 +80,13 @@ export default function Home() {
       <LogoLoader
         variant="fullscreen"
         label="howudoin"
-        sublabel="Initializing secure chat space..."
+        sublabel="Loading your chats..."
       />
     );
   }
 
   return (
-    <main className="w-screen h-screen overflow-hidden flex bg-black relative">
+    <main className="w-full h-full h-[100dvh] overflow-hidden flex bg-black relative">
       {/* Show Auth Modal if not signed in */}
       {!user && <AuthModal />}
 
@@ -101,8 +101,8 @@ export default function Home() {
           {/* Brand Header */}
           <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between flex-shrink-0 bg-black/40">
             <Logo size="sm" withText />
-            <span className="text-[10px] font-mono tracking-widest px-2 py-0.5 rounded-full glass-pill text-zinc-400 border border-white/5">
-              ANONYMOUS • P2P
+            <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full glass-pill text-zinc-400 border border-white/5">
+              Private Chats
             </span>
           </div>
 

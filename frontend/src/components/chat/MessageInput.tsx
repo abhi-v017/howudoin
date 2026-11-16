@@ -119,7 +119,7 @@ export function MessageInput({ onSendMessage, onTyping }: MessageInputProps) {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          title="Attach Image, Audio, Video, or Document"
+          title="Attach file"
           className="p-2.5 rounded-full glass-pill hover:bg-white/10 text-zinc-400 hover:text-white transition-all flex-shrink-0"
         >
           <Paperclip className="w-4 h-4" />
@@ -130,8 +130,8 @@ export function MessageInput({ onSendMessage, onTyping }: MessageInputProps) {
           type="text"
           value={text}
           onChange={handleTextChange}
-          placeholder="Type an anonymous realtime message..."
-          className="flex-1 bg-transparent border-none text-white text-sm placeholder-zinc-500 focus:outline-none px-2"
+          placeholder="Type a message..."
+          className="flex-1 bg-transparent border-none text-white text-base sm:text-sm placeholder-zinc-500 focus:outline-none px-2 min-w-0"
         />
 
         {/* Send Action */}

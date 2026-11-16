@@ -1,5 +1,6 @@
 export interface User {
   id: string; // e.g. "abekrox_1971"
+  email?: string;
   username: string;
   tag: string;
   displayName: string;
@@ -25,6 +26,7 @@ export interface ConversationMember {
     username: string;
     tag: string;
     avatarUrl?: string;
+    bio?: string;
     isOnline?: boolean;
     lastSeen?: string;
   };

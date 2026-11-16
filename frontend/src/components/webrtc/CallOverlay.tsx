@@ -70,8 +70,8 @@ export function CallOverlay() {
               <LogoLoader
                 variant="call"
                 size={42}
-                label="P2P Encrypted Voice"
-                sublabel="Secure peer-to-peer audio tunnel"
+                label="Voice Call"
+                sublabel="Connected"
               />
             </div>
           )}

@@ -9,7 +9,8 @@ import { api } from "@/lib/api";
 import { MessageBubble } from "./MessageBubble";
 import { MessageInput } from "./MessageInput";
 import { TypingIndicator } from "./TypingIndicator";
-import { Phone, Video, ArrowLeft, ShieldCheck } from "lucide-react";
+import { UserProfileModal } from "./UserProfileModal";
+import { Phone, Video, ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { LogoLoader } from "@/components/ui/LogoLoader";
 
@@ -25,6 +26,7 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -163,7 +165,7 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
           />
         </h3>
         <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
-          Select a chat from the left or click <strong>&quot;+ New&quot;</strong> to begin an anonymous, encrypted conversation.
+          Select a chat from the left or click <strong>&quot;+ New&quot;</strong> to start a conversation.
         </p>
       </div>
     );
@@ -184,50 +186,55 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
             </button>
           )}
 
-          {/* Avatar with Status Ring */}
-          <div className="relative flex-shrink-0">
-            <img
-              src={recipientAvatar}
-              alt={recipientName}
-              className="w-10 h-10 rounded-xl bg-white/5 object-cover border border-white/10"
-            />
-            {isDirect && (
-              <span
-                className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-black transition-all ${
-                  isOtherOnline
-                    ? "bg-emerald-400 shadow-[0_0_6px_#34d399]"
-                    : "bg-zinc-600"
-                }`}
+          {/* Clickable Profile Info Header */}
+          <div
+            onClick={() => setIsProfileModalOpen(true)}
+            className="flex items-center gap-3 min-w-0 cursor-pointer group hover:opacity-90 transition-opacity"
+            title="Click to view details"
+          >
+            {/* Avatar with Status Ring */}
+            <div className="relative flex-shrink-0">
+              <img
+                src={recipientAvatar}
+                alt={recipientName}
+                className="w-10 h-10 rounded-xl bg-white/5 object-cover border border-white/10 group-hover:border-white/30 transition-all"
               />
-            )}
-          </div>
-
-          {/* User Status Header */}
-          <div className="min-w-0 flex flex-col">
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-sm text-white truncate">{recipientName}</h2>
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] text-zinc-400 px-2 py-0.5 rounded-full glass-pill">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                <span>P2P Ready</span>
-              </span>
+              {isDirect && (
+                <span
+                  className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-black transition-all ${
+                    isOtherOnline
+                      ? "bg-emerald-400 shadow-[0_0_6px_#34d399]"
+                      : "bg-zinc-600"
+                  }`}
+                />
+              )}
             </div>
 
-            {/* Subtitle: Only show useful end-user status (never raw UUID!) */}
-            <div className="text-[11px] truncate flex items-center gap-1.5">
-              {isRecipientTyping ? (
-                <span className="text-emerald-400 font-medium animate-pulse">typing...</span>
-              ) : isDirect ? (
-                isOtherOnline ? (
-                  <span className="text-emerald-400 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    Online
-                  </span>
+            {/* User Status Header */}
+            <div className="min-w-0 flex flex-col">
+              <div className="flex items-center gap-2">
+                <h2 className="font-bold text-sm text-white truncate group-hover:text-emerald-300 transition-colors">
+                  {recipientName}
+                </h2>
+              </div>
+
+              {/* Subtitle: Status */}
+              <div className="text-[11px] truncate flex items-center gap-1.5">
+                {isRecipientTyping ? (
+                  <span className="text-emerald-400 font-medium animate-pulse">typing...</span>
+                ) : isDirect ? (
+                  isOtherOnline ? (
+                    <span className="text-emerald-400 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      Online
+                    </span>
+                  ) : (
+                    <span className="text-zinc-500">Offline</span>
+                  )
                 ) : (
-                  <span className="text-zinc-500">Offline</span>
-                )
-              ) : (
-                <span className="text-zinc-500">{conversation.members?.length || 0} members</span>
-              )}
+                  <span className="text-zinc-500">{conversation.members?.length || 0} members</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -258,7 +265,7 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
       >
         {isLoading ? (
           <div className="h-full flex items-center justify-center">
-            <LogoLoader variant="stage" label="Retrieving messages..." sublabel="Decrypted on-device" />
+            <LogoLoader variant="stage" label="Retrieving messages..." sublabel="Loading chat history..." />
           </div>
         ) : messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-500">
@@ -281,13 +288,37 @@ export function ChatStage({ conversation, onBack }: ChatStageProps) {
         <TypingIndicator usernames={currentTyping} />
       </div>
 
-      {/* Bottom Message Input Bar */}
-      <div className="p-3 sm:p-4 border-t border-white/5 flex-shrink-0 bg-black/60 backdrop-blur-xl">
+      {/* Bottom Message Input Bar with Safe Area Bottom */}
+      <div className="p-2.5 sm:p-4 border-t border-white/5 flex-shrink-0 bg-black/60 backdrop-blur-xl pb-[max(0.625rem,env(safe-area-inset-bottom))]">
         <MessageInput
           onSendMessage={handleSendMessage}
           onTyping={handleTyping}
         />
       </div>
+
+      {/* User Details Modal */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        isDirect={isDirect}
+        user={
+          otherMember?.user
+            ? {
+                id: otherMember.user.id,
+                username: otherMember.user.username,
+                tag: otherMember.user.tag,
+                avatarUrl: otherMember.user.avatarUrl,
+                bio: otherMember.user.bio,
+                isOnline: isOtherOnline,
+              }
+            : null
+        }
+        groupTitle={conversation.title}
+        groupDescription={conversation.description}
+        groupAvatar={conversation.avatarUrl}
+        members={conversation.members}
+        onStartCall={(type) => initiateCall(conversation.id, otherMember?.userId, type)}
+      />
     </div>
   );
 }

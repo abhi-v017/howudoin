@@ -9,11 +9,12 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   theme: string;
-  login: (username: string, password: string, tag?: string) => Promise<void>;
-  register: (username: string, password: string, avatarUrl?: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
+  register: (email: string, username: string, password: string, avatarUrl?: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => void;
   setTheme: (theme: string) => void;
-  updateProfile: (data: { bio?: string; theme?: string; avatarUrl?: string }) => Promise<void>;
+  updateProfile: (data: { username?: string; bio?: string; theme?: string; avatarUrl?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,8 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (username: string, password: string, tag?: string) => {
-    const res = await api.auth.login({ username, password, tag });
+  const login = async (identifier: string, password: string) => {
+    const res = await api.auth.login({ identifier, password });
     if (res.success && res.data) {
       const { user: authUser, token: authToken } = res.data;
       setUser(authUser);
@@ -80,13 +81,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (username: string, password: string, avatarUrl?: string) => {
-    const res = await api.auth.register({ username, password, avatarUrl });
+  const register = async (email: string, username: string, password: string, avatarUrl?: string) => {
+    const res = await api.auth.register({ email, username, password, avatarUrl });
     if (res.success && res.data) {
       const { user: authUser, token: authToken } = res.data;
       setUser(authUser);
       setToken(authToken);
       localStorage.setItem("chatapp_token", authToken);
+    }
+  };
+
+  const loginWithGoogle = async (credential: string) => {
+    const res = await api.auth.googleLogin(credential);
+    if (res.success && res.data) {
+      const { user: authUser, token: authToken } = res.data;
+      setUser(authUser);
+      setToken(authToken);
+      localStorage.setItem("chatapp_token", authToken);
+      if (authUser.theme) {
+        setTheme(authUser.theme);
+      }
     }
   };
 
@@ -96,11 +110,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
   };
 
-  const updateProfile = async (data: { bio?: string; theme?: string; avatarUrl?: string }) => {
+  const updateProfile = async (data: { username?: string; bio?: string; theme?: string; avatarUrl?: string }) => {
     if (!token) return;
     const res = await api.users.updateProfile(data, token);
     if (res.success && res.data) {
-      setUser((prev) => (prev ? { ...prev, ...res.data } : null));
+      const { token: newToken, ...updatedUserData } = res.data;
+      setUser((prev) => (prev ? { ...prev, ...updatedUserData } : null));
+      if (newToken) {
+        setToken(newToken);
+        localStorage.setItem("chatapp_token", newToken);
+      }
       if (data.theme) setTheme(data.theme);
     }
   };
@@ -114,6 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         theme,
         login,
         register,
+        loginWithGoogle,
         logout,
         setTheme,
         updateProfile,

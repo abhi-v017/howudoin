@@ -1,5 +1,6 @@
 import { prisma } from '../config/database';
 import { AppError } from '../middlewares/error.middleware';
+import { encryptMessageContent, decryptMessageContent } from '../utils/crypto';
 
 export class MessageService {
   /**
@@ -32,12 +33,13 @@ export class MessageService {
       throw new AppError('You are not a member of this conversation', 403);
     }
 
-    // 2. Create message
+    // 2. Create message with encryption at rest
+    const encryptedContent = data.content ? encryptMessageContent(data.content) : undefined;
     const message = await prisma.message.create({
       data: {
         conversationId: data.conversationId,
         senderId: userId,
-        content: data.content,
+        content: encryptedContent,
         type: data.type || 'TEXT',
         mediaUrl: data.mediaUrl,
         mediaName: data.mediaName,
@@ -74,7 +76,18 @@ export class MessageService {
       data: { updatedAt: new Date() },
     });
 
-    return message;
+    return {
+      ...message,
+      content: data.content,
+      replyTo: message.replyTo
+        ? {
+            ...message.replyTo,
+            content: message.replyTo.content
+              ? decryptMessageContent(message.replyTo.content)
+              : message.replyTo.content,
+          }
+        : null,
+    };
   }
 
   /**
@@ -132,9 +145,23 @@ export class MessageService {
       nextCursor = nextItem ? nextItem.id : null;
     }
 
+    // Decrypt messages on-the-fly for authorized members
+    const decryptedMessages = messages.map((m) => ({
+      ...m,
+      content: m.content ? decryptMessageContent(m.content) : m.content,
+      replyTo: m.replyTo
+        ? {
+            ...m.replyTo,
+            content: m.replyTo.content
+              ? decryptMessageContent(m.replyTo.content)
+              : m.replyTo.content,
+          }
+        : null,
+    }));
+
     // Return in chronological order (oldest to newest)
     return {
-      messages: messages.reverse(),
+      messages: decryptedMessages.reverse(),
       nextCursor,
     };
   }

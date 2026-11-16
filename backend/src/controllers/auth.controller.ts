@@ -22,6 +22,16 @@ export class AuthController {
     }
   }
 
+  static async googleLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { credential } = req.body;
+      const result = await AuthService.googleLogin(credential);
+      return sendSuccess(res, result, 'Google login successful');
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getMe(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const user = await AuthService.getMe(req.user!.userId);

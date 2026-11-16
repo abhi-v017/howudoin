@@ -109,7 +109,7 @@ export function NewChatModal({ isOpen, onClose, onConversationCreated }: NewChat
 
         <h3 className="text-xl font-bold text-white mb-1">New Conversation</h3>
         <p className="text-xs text-zinc-400 mb-5">
-          Connect anonymously via username or unique ID.
+          Find friends by username or ID.
         </p>
 
         {/* Tab switch */}
@@ -121,7 +121,7 @@ export function NewChatModal({ isOpen, onClose, onConversationCreated }: NewChat
             }`}
           >
             <UserPlus className="w-3.5 h-3.5" />
-            <span>Direct 1-on-1</span>
+            <span>Direct Chat</span>
           </button>
           <button
             onClick={() => { setTab("group"); setError(null); }}

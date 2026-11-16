@@ -1,5 +1,7 @@
 import { prisma } from '../config/database';
 import { AppError } from '../middlewares/error.middleware';
+import { generateTag } from '../utils/tagGenerator';
+import { signToken } from '../utils/jwt';
 
 export class UserService {
   /**
@@ -83,12 +85,66 @@ export class UserService {
   }
 
   /**
-   * Update current user profile (bio, theme, avatarUrl)
+   * Update current user profile (username, bio, theme, avatarUrl)
    */
-  static async updateProfile(userId: string, data: { bio?: string; avatarUrl?: string; theme?: string }) {
+  static async updateProfile(
+    userId: string,
+    data: { username?: string; bio?: string; avatarUrl?: string; theme?: string }
+  ) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    let newUsername = user.username;
+    let newTag = user.tag;
+
+    if (data.username && data.username.trim() !== user.username) {
+      newUsername = data.username.trim();
+
+      // Check if (newUsername, current tag) is taken by another user
+      const existingWithSameTag = await prisma.user.findFirst({
+        where: {
+          username: { equals: newUsername, mode: 'insensitive' },
+          tag: user.tag,
+          id: { not: userId },
+        },
+      });
+
+      if (existingWithSameTag) {
+        // Tag collision: generate a fresh unique tag for this username
+        let isUnique = false;
+        let attempts = 0;
+        while (!isUnique && attempts < 10) {
+          const candidateTag = generateTag();
+          const existing = await prisma.user.findFirst({
+            where: {
+              username: { equals: newUsername, mode: 'insensitive' },
+              tag: candidateTag,
+              id: { not: userId },
+            },
+          });
+          if (!existing) {
+            newTag = candidateTag;
+            isUnique = true;
+          }
+          attempts++;
+        }
+
+        if (!isUnique) {
+          throw new AppError('This username is currently congested. Please pick another name.', 409);
+        }
+      }
+    }
+
     const updated = await prisma.user.update({
       where: { id: userId },
       data: {
+        username: newUsername,
+        tag: newTag,
         ...(data.bio !== undefined ? { bio: data.bio } : {}),
         ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
         ...(data.theme !== undefined ? { theme: data.theme } : {}),
@@ -100,13 +156,22 @@ export class UserService {
         avatarUrl: true,
         bio: true,
         theme: true,
+        email: true,
+        createdAt: true,
       },
+    });
+
+    const token = signToken({
+      userId: updated.id,
+      username: updated.username,
+      tag: updated.tag,
     });
 
     return {
       ...updated,
       displayName: updated.username,
       uniqueId: updated.id,
+      token,
     };
   }
 }

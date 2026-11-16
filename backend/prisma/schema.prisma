@@ -48,9 +48,11 @@ enum CallStatus {
 
 model User {
   id           String   @id // Short unique ID derived from username, e.g. "abekrox_1971"
+  email        String?  @unique
+  googleId     String?  @unique
   username     String   @db.VarChar(50)
   tag          String   @db.VarChar(10) // e.g., "7482" for "username#7482"
-  passwordHash String
+  passwordHash String?
   avatarUrl    String?
   bio          String?  @default("Hey there! I am using this private chat app.")
   theme        String   @default("dark") // "dark", "light", "cyberpunk", "midnight"
@@ -69,6 +71,7 @@ model User {
 
   @@unique([username, tag])
   @@index([username])
+  @@index([email])
 }
 
 model Conversation {

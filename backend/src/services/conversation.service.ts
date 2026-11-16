@@ -1,5 +1,6 @@
 import { prisma } from '../config/database';
 import { AppError } from '../middlewares/error.middleware';
+import { decryptMessageContent } from '../utils/crypto';
 
 export class ConversationService {
   /**
@@ -83,6 +84,7 @@ export class ConversationService {
                 username: true,
                 tag: true,
                 avatarUrl: true,
+                bio: true,
                 isOnline: true,
                 lastSeen: true,
               },
@@ -117,6 +119,7 @@ export class ConversationService {
                 username: true,
                 tag: true,
                 avatarUrl: true,
+                bio: true,
                 isOnline: true,
                 lastSeen: true,
               },
@@ -166,6 +169,7 @@ export class ConversationService {
                 username: true,
                 tag: true,
                 avatarUrl: true,
+                bio: true,
                 isOnline: true,
                 lastSeen: true,
               },
@@ -189,11 +193,19 @@ export class ConversationService {
       : conv.title || 'Group Chat';
     const displayAvatar = isDirect ? otherMembers[0]?.user?.avatarUrl : conv.avatarUrl;
 
+    const rawLastMsg = conv.messages?.[0] || conv.lastMessage || null;
+    const lastMessage = rawLastMsg
+      ? {
+          ...rawLastMsg,
+          content: rawLastMsg.content ? decryptMessageContent(rawLastMsg.content) : rawLastMsg.content,
+        }
+      : null;
+
     return {
       ...conv,
       displayTitle,
       displayAvatar,
-      lastMessage: conv.messages?.[0] || conv.lastMessage || null,
+      lastMessage,
     };
   }
 
@@ -219,6 +231,7 @@ export class ConversationService {
                 username: true,
                 tag: true,
                 avatarUrl: true,
+                bio: true,
                 isOnline: true,
                 lastSeen: true,
               },

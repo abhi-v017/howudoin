@@ -179,19 +179,21 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   log('User logged out', 'warn');
 });
 
-// Quick Register Anonymous User
-const codenames = ['Shadow', 'Phantom', 'Ghost', 'Viper', 'Nexus', 'Cipher', 'Nova', 'Apex', 'Mirage', 'Spectre'];
-document.getElementById('btn-quick-anon').addEventListener('click', async () => {
-  const randomCodename = codenames[Math.floor(Math.random() * codenames.length)];
-  const randomPassword = 'anon_pass_' + Math.floor(Math.random() * 10000);
+// Register User with Email
+document.getElementById('btn-register').addEventListener('click', async () => {
+  const email = document.getElementById('reg-email').value.trim();
+  const username = document.getElementById('reg-username').value.trim();
+  const password = document.getElementById('reg-password').value;
 
-  log(`Attempting anonymous registration as: ${randomCodename}...`, 'info');
+  if (!email || !username || !password) return alert('Email, username and password required');
+
+  log(`Attempting registration for ${email}...`, 'info');
 
   try {
     const res = await fetch('/api/v1/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: randomCodename, password: randomPassword }),
+      body: JSON.stringify({ email, username, password }),
     });
 
     const data = await res.json();
@@ -204,24 +206,24 @@ document.getElementById('btn-quick-anon').addEventListener('click', async () => 
 
     renderUserCard();
     connectSocket();
-    log(`Registered as ${state.user.username} (Unique ID: ${state.user.uniqueId || state.user.id})`, 'success');
+    log(`Registered successfully as ${state.user.username} (${state.user.email})`, 'success');
   } catch (err) {
     log(`Register Error: ${err.message}`, 'error');
   }
 });
 
-// Manual Login
+// Manual Login with Email or Username
 document.getElementById('btn-login').addEventListener('click', async () => {
-  const username = document.getElementById('login-username').value.trim();
+  const identifier = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value;
 
-  if (!username || !password) return alert('Username and password required');
+  if (!identifier || !password) return alert('Email/username and password required');
 
   try {
     const res = await fetch('/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ identifier, password }),
     });
 
     const data = await res.json();

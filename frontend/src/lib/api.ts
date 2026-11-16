@@ -31,15 +31,20 @@ export async function apiRequest<T>(
 
 export const api = {
   auth: {
-    register: (body: { username: string; password: string; avatarUrl?: string }) =>
+    register: (body: { email: string; username: string; password: string; avatarUrl?: string }) =>
       apiRequest<{ user: any; token: string }>("/auth/register", {
         method: "POST",
         body: JSON.stringify(body),
       }),
-    login: (body: { username: string; password: string; tag?: string }) =>
+    login: (body: { identifier: string; password: string }) =>
       apiRequest<{ user: any; token: string }>("/auth/login", {
         method: "POST",
         body: JSON.stringify(body),
+      }),
+    googleLogin: (credential: string) =>
+      apiRequest<{ user: any; token: string }>("/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ credential }),
       }),
     getMe: (token: string) =>
       apiRequest<any>("/auth/me", { method: "GET" }, token),
@@ -50,7 +55,7 @@ export const api = {
       apiRequest<any[]>(`/users/search?query=${encodeURIComponent(query)}`, { method: "GET" }, token),
     getProfile: (userId: string, token: string) =>
       apiRequest<any>(`/users/${userId}`, { method: "GET" }, token),
-    updateProfile: (body: { bio?: string; theme?: string; avatarUrl?: string }, token: string) =>
+    updateProfile: (body: { username?: string; bio?: string; theme?: string; avatarUrl?: string }, token: string) =>
       apiRequest<any>("/users/profile", {
         method: "PATCH",
         body: JSON.stringify(body),

@@ -8,6 +8,9 @@ import { errorHandler } from './middlewares/error.middleware';
 
 const app = express();
 
+// Trust reverse proxy headers (e.g. Render, Railway, Nginx, Cloudflare, Fly.io, Vercel)
+app.set('trust proxy', 1);
+
 // Security Headers (relaxed CSP so inline scripts and socket.io client run smoothly in testing dashboard)
 app.use(
   helmet({
@@ -16,10 +19,13 @@ app.use(
   })
 );
 
-// Cross-Origin Resource Sharing
+// Cross-Origin Resource Sharing (Allows credentials with request-origin reflection)
 app.use(
   cors({
-    origin: '*',
+    origin: (origin, callback) => {
+      // Reflect the origin if present, or allow server-to-server / curl
+      callback(null, origin || true);
+    },
     credentials: true,
   })
 );

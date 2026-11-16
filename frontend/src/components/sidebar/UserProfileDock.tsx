@@ -4,16 +4,19 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useSocket } from "@/context/SocketContext";
 import { ThemeSelector } from "@/components/ui/ThemeSelector";
-import { Copy, Check, LogOut, Radio } from "lucide-react";
+import { SettingsModal } from "@/components/settings/SettingsModal";
+import { Copy, Check, LogOut, Settings } from "lucide-react";
 
 export function UserProfileDock() {
   const { user, logout } = useAuth();
   const { isConnected } = useSocket();
   const [copied, setCopied] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   if (!user) return null;
 
-  const handleCopyId = () => {
+  const handleCopyId = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const idToCopy = user.uniqueId || user.id;
     navigator.clipboard.writeText(idToCopy);
     setCopied(true);
@@ -24,60 +27,79 @@ export function UserProfileDock() {
   const shortId = user.uniqueId || user.id;
 
   return (
-    <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 border border-white/10 shadow-glass">
-      {/* User Meta */}
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="relative flex-shrink-0">
-          <img
-            src={user.avatarUrl || `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`}
-            alt={cleanUsername}
-            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 object-cover"
-          />
-          {/* Socket connectivity status dot */}
-          <span
-            className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-black ${
-              isConnected ? "bg-emerald-400" : "bg-amber-400"
-            }`}
-            title={isConnected ? "Realtime Socket Active" : "Reconnecting..."}
-          />
-        </div>
-
-        <div className="min-w-0 flex flex-col">
-          <div className="flex items-center gap-1.5">
-            <span className="font-semibold text-sm text-white truncate">
-              {cleanUsername}
-            </span>
+    <>
+      <div className="glass-panel p-3 rounded-2xl flex items-center justify-between gap-3 border border-white/10 shadow-glass">
+        {/* User Meta (Clickable to open Settings) */}
+        <div
+          onClick={() => setIsSettingsOpen(true)}
+          title="Click to open Account Settings"
+          className="flex items-center gap-3 min-w-0 cursor-pointer group"
+        >
+          <div className="relative flex-shrink-0">
+            <img
+              src={user.avatarUrl || `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`}
+              alt={cleanUsername}
+              className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 object-cover group-hover:border-white/30 transition-all"
+            />
+            {/* Status dot */}
+            <span
+              className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-black ${
+                isConnected ? "bg-emerald-400" : "bg-amber-400"
+              }`}
+              title={isConnected ? "Online" : "Connecting..."}
+            />
           </div>
 
-          {/* 1-Click Copy Unique ID Capsule */}
+          <div className="min-w-0 flex flex-col">
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-sm text-white truncate group-hover:text-emerald-300 transition-colors">
+                {cleanUsername}
+              </span>
+            </div>
+
+            {/* Copy User ID Capsule */}
+            <button
+              onClick={handleCopyId}
+              title="Copy User ID"
+              className="group/copy flex items-center gap-1 text-[11px] font-mono text-zinc-400 hover:text-white transition-all text-left"
+            >
+              <span className="truncate opacity-80 group-hover/copy:opacity-100">
+                {shortId}
+              </span>
+              {copied ? (
+                <Check className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+              ) : (
+                <Copy className="w-3 h-3 opacity-50 group-hover/copy:opacity-100 flex-shrink-0" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <button
-            onClick={handleCopyId}
-            title="Click to copy Unique ID"
-            className="group flex items-center gap-1 text-[11px] font-mono text-zinc-400 hover:text-white transition-all text-left"
+            onClick={() => setIsSettingsOpen(true)}
+            title="Profile & Settings"
+            className="glass-pill p-2 rounded-full text-zinc-400 hover:text-white hover:border-white/20 transition-all text-xs"
           >
-            <span className="truncate opacity-80 group-hover:opacity-100">
-              {shortId}
-            </span>
-            {copied ? (
-              <Check className="w-3 h-3 text-emerald-400 flex-shrink-0" />
-            ) : (
-              <Copy className="w-3 h-3 opacity-50 group-hover:opacity-100 flex-shrink-0" />
-            )}
+            <Settings className="w-3.5 h-3.5" />
+          </button>
+          <ThemeSelector />
+          <button
+            onClick={logout}
+            title="Log Out"
+            className="glass-pill p-2 rounded-full text-zinc-400 hover:text-red-400 hover:border-red-500/30 transition-all text-xs"
+          >
+            <LogOut className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Action Controls */}
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <ThemeSelector />
-        <button
-          onClick={logout}
-          title="Log Out"
-          className="glass-pill p-2 rounded-full text-zinc-400 hover:text-red-400 hover:border-red-500/30 transition-all text-xs"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-        </button>
-      </div>
-    </div>
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
+    </>
   );
 }

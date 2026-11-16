@@ -97,6 +97,16 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* Hide scrollbar on touch devices while preserving scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Clean OLED Pitch Black Background */
 .ambient-glow {
   display: none;

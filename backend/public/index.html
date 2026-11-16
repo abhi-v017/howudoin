@@ -67,26 +67,19 @@
     <div class="playground-layout">
       <!-- Left Column: Auth & User Profile -->
       <section class="card">
-        <h2>🔒 Anonymous Identity & Auth</h2>
-        <p class="section-desc">Zero emails, zero phone numbers. Pure anonymity with Unique IDs &amp; Discriminator Tags.</p>
+        <h2>🔒 User Identity &amp; Auth</h2>
+        <p class="section-desc">Email &amp; Password authentication with Unique IDs &amp; rate-limiting protection.</p>
 
         <div class="tab-group">
-          <button class="tab-btn active" data-tab="tab-quick-reg">Quick Generate</button>
-          <button class="tab-btn" data-tab="tab-login">Login</button>
-          <button class="tab-btn" data-tab="tab-manual-reg">Custom Register</button>
-        </div>
-
-        <!-- Quick Register -->
-        <div class="tab-content active" id="tab-quick-reg">
-          <p class="hint">Instantly generate a random anonymous identity (e.g. <code>Phantom</code> with ID <code>phantom_4921</code>):</p>
-          <button class="btn btn-primary" id="btn-quick-anon">⚡ Generate Random Anonymous User</button>
+          <button class="tab-btn active" data-tab="tab-login">Login</button>
+          <button class="tab-btn" data-tab="tab-manual-reg">Sign Up (Email)</button>
         </div>
 
         <!-- Login -->
-        <div class="tab-content" id="tab-login">
+        <div class="tab-content active" id="tab-login">
           <div class="form-group">
-            <label>Username or Unique ID:</label>
-            <input type="text" id="login-username" placeholder="e.g. abekrox or abekrox_1971">
+            <label>Email or Username:</label>
+            <input type="text" id="login-username" placeholder="e.g. name@example.com or abekrox">
           </div>
           <div class="form-group">
             <label>Password:</label>
@@ -98,6 +91,10 @@
         <!-- Custom Register -->
         <div class="tab-content" id="tab-manual-reg">
           <div class="form-group">
+            <label>Email Address:</label>
+            <input type="email" id="reg-email" placeholder="name@example.com">
+          </div>
+          <div class="form-group">
             <label>Desired Username:</label>
             <input type="text" id="reg-username" placeholder="Letters, numbers, underscores">
           </div>
@@ -105,7 +102,7 @@
             <label>Password:</label>
             <input type="password" id="reg-password" placeholder="At least 6 characters">
           </div>
-          <button class="btn btn-primary" id="btn-register">Register</button>
+          <button class="btn btn-primary" id="btn-register">Register Account</button>
         </div>
 
         <!-- Active Identity Card -->

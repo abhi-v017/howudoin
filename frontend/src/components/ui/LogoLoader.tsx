@@ -153,8 +153,8 @@ export function LogoLoader({
             {sublabel}
           </p>
         ) : isFullscreen ? (
-          <p className="text-[10px] text-zinc-600 font-mono tracking-widest mt-0.5 uppercase">
-            Encrypted Workspace • P2P
+          <p className="text-[10px] text-zinc-500 font-medium tracking-wider mt-0.5">
+            Private &amp; Secure
           </p>
         ) : null}
 
