@@ -41,6 +41,11 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 const publicDir = path.resolve(__dirname, '../public');
 app.use(express.static(publicDir));
 
+// Lightweight Keep-Alive ping for UptimeRobot / Cron jobs (2-byte plain response)
+app.get(['/ping', '/health'], (_req: Request, res: Response) => {
+  res.status(200).type('text/plain').send('ok');
+});
+
 // API Routes
 app.use('/api/v1', apiRoutes);
 
