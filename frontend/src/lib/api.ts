@@ -1,4 +1,11 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const getCleanApiBase = () => {
+  const raw = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1")
+    .trim()
+    .replace(/\/+$/, "");
+  return raw.endsWith("/api/v1") ? raw : `${raw}/api/v1`;
+};
+
+const API_BASE = getCleanApiBase();
 
 export async function apiRequest<T>(
   endpoint: string,
@@ -15,18 +22,41 @@ export async function apiRequest<T>(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const res = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  try {
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers,
+    });
 
-  const json = await res.json();
+    let json: any;
+    const text = await res.text();
+    try {
+      json = JSON.parse(text);
+    } catch {
+      if (!res.ok) {
+        throw new Error(
+          `Server returned status ${res.status}. The backend may be waking up, please wait a moment and try again.`
+        );
+      }
+      throw new Error("Invalid response format received from server.");
+    }
 
-  if (!res.ok) {
-    throw new Error(json.message || "An unexpected error occurred");
+    if (!res.ok) {
+      throw new Error(json.message || "An unexpected error occurred");
+    }
+
+    return json;
+  } catch (err: any) {
+    if (
+      err.name === "TypeError" &&
+      (err.message.includes("fetch") || err.message.includes("NetworkError"))
+    ) {
+      throw new Error(
+        "Unable to reach the server. The backend may be waking up from sleep (takes ~25s), please wait a few seconds and try again."
+      );
+    }
+    throw err;
   }
-
-  return json;
 }
 
 export const api = {

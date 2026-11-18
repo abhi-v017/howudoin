@@ -1,174 +1,190 @@
-# 🚀 howudoin - Realtime Chat Application
+# howudoin — Private Realtime Messaging & Calls
 
-A high-performance, privacy-focused open-source chat application built with **Node.js, Express.js, TypeScript, PostgreSQL (SQL), Redis, Socket.io, WebRTC**, and Docker.
-
----
-
-## 🌟 Key Features
-
-- **🔒 Anonymous & Private Authentication**:
-  - Zero emails, zero phone numbers required.
-  - Automatically generates a unique anonymous Discriminator Tag (e.g. `Shadow#4829`) and UUID.
-  - User connection discovery by unique ID or `username#tag`.
-  - Secure bcrypt password hashing and JWT authentication.
-- **💬 Realtime Messaging**:
-  - 1-on-1 direct conversations and group chats.
-  - Sub-millisecond latency powered by Socket.io and Redis pub/sub.
-  - Realtime typing indicators, read receipts, and user presence tracking.
-- **📹 WebRTC Voice & Video Calls**:
-  - Full signaling mechanism (`call:initiate`, `call:accept`, `call:reject`, `call:signal`, `call:end`) over WebSockets.
-  - Supports 1-on-1 audio/video calls and group rooms with ICE/SDP negotiation.
-- **📁 Media Sharing with Configurable Limits**:
-  - Safe file upload pipeline supporting images, voice notes/audio, video, documents, and archives.
-  - Built-in HTTP Range header streaming support for video and audio scrubbing.
-- **🎨 Theme Switching**:
-  - Persisted user theme preferences (`dark`, `light`, `cyberpunk`, `midnight`, `emerald`).
-- **🛠️ Built-in Diagnostics & Testing Dashboard**:
-  - Live HTTP response time / latency meter.
-  - Real-time DB & Redis connectivity monitor.
-  - Interactive WebSocket playground to test messaging, presence, and WebRTC signaling directly in your browser.
+A modern, high-performance, privacy-first web messaging platform built with **Next.js 14, Node.js, Express, TypeScript, PostgreSQL, Socket.io, and WebRTC**. Designed with a pitch-black OLED glassmorphic aesthetic, zero personal data tracking, and authenticated AES-256-GCM encryption at rest.
 
 ---
 
-## 🏗️ Clean Project Architecture (Designed for Solo Developer Management)
+## Features
 
-```
+- **Private & Frictionless Auth**: Sign in with Google or Email/Password. No personal Google profile photos or metadata are ever stored.
+- **Privacy-First Avatars**: Curated collection of 16 SVG avatars across 4 categories (Cyber Bots, Personas, Identicons, Abstract) plus custom seed generation.
+- **Realtime Chat**: Instant 1-on-1 and group messaging powered by WebSockets (Socket.io), typing indicators, online presence, and message history.
+- **WebRTC Voice & Video**: Peer-to-peer audio and video calls with DTLS-SRTP encryption and floating call overlays.
+- **Encrypted Message Storage**: Messages stored in PostgreSQL are automatically encrypted with AES-256-GCM (`enc:v1:<iv>:<tag>:<ciphertext>`).
+- **Profile & Contact Details**: Interactive contact info modal showing user bio, handle, and unique ID with 1-click copy.
+- **Mobile & Android Optimized**: Dynamic viewport height (`100dvh`), notch padding, touch-safe targets, and PWA manifest for home-screen installation.
+- **Zero Technical Jargon**: Clean, friendly UI free of developer terms for an effortless user experience.
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, Lucide Icons |
+| **Backend** | Node.js, Express, TypeScript, Socket.io, Prisma ORM, Zod, Multer, Helmet |
+| **Database** | PostgreSQL (Neon.tech Serverless / Docker) |
+| **Cache & Realtime** | Redis (optional for horizontal scaling; runs standalone in-memory by default) |
+| **Security** | AES-256-GCM message encryption, bcrypt password hashing, JWT auth, DTLS-SRTP WebRTC |
+| **Hosting** | Vercel (Frontend), Render (Backend), Neon (Database) |
+
+---
+
+## Project Structure
+
+```text
 chatApp/
-├── backend/
-│   ├── prisma/
-│   │   └── schema.prisma         # Documented PostgreSQL database schema
+├── frontend/                     # Next.js 14 App Router client
+│   ├── public/                   # PWA manifest.json, icons, logos
 │   ├── src/
-│   │   ├── config/               # Env vars, Prisma client, Redis client
-│   │   ├── controllers/          # HTTP request handlers
-│   │   │   ├── auth.controller.ts
-│   │   │   ├── user.controller.ts
-│   │   │   ├── conversation.controller.ts
-│   │   │   ├── message.controller.ts
-│   │   │   ├── media.controller.ts
-│   │   │   └── system.controller.ts
-│   │   ├── middlewares/          # Auth guard, Zod validator, Multer upload, Error handler
-│   │   ├── routes/               # Modular Express API endpoints (/api/v1/*)
-│   │   ├── schema/               # Zod validation schemas
-│   │   ├── services/             # Core business logic & database queries
-│   │   ├── sockets/              # Socket.io server, presence, chat, and WebRTC handlers
-│   │   ├── types/                # TypeScript interfaces and contracts
-│   │   ├── utils/                # Logger, JWT, Tag generator, Response helpers
-│   │   ├── app.ts                # Express app setup and middleware chain
-│   │   └── server.ts             # Server entrypoint (HTTP + WebSockets)
-│   ├── public/                   # Diagnostic & Live Testing Dashboard (HTML, JS, CSS)
-│   ├── uploads/                  # User uploaded media storage
-│   ├── Dockerfile
+│   │   ├── app/                  # globals.css, layout.tsx, page.tsx
+│   │   ├── components/
+│   │   │   ├── auth/             # Google & Email AuthModal
+│   │   │   ├── chat/             # ChatStage, MessageBubble, MessageInput, UserProfileModal
+│   │   │   ├── settings/         # SettingsModal (username, bio, avatar, theme)
+│   │   │   ├── sidebar/          # ConversationList, UserProfileDock, NewChatModal
+│   │   │   ├── ui/               # Logo, LogoLoader, ThemeSelector
+│   │   │   └── webrtc/           # CallOverlay, IncomingCallBanner
+│   │   ├── constants/            # Curated preset avatars
+│   │   ├── context/              # AuthContext, SocketContext, CallContext
+│   │   ├── lib/                  # API client and utility helpers
+│   │   └── types/                # TypeScript interfaces
+│   └── package.json
+│
+├── backend/                      # Node.js + Express + Socket.io server
+│   ├── prisma/
+│   │   └── schema.prisma         # PostgreSQL data models
+│   ├── src/
+│   │   ├── config/               # Database, Redis, and Environment configs
+│   │   ├── controllers/          # Auth, Conversation, Message, User, System controllers
+│   │   ├── middlewares/          # AuthGuard, Zod validation, Multer, Error handlers
+│   │   ├── routes/               # Modular REST endpoints (/api/v1/*)
+│   │   ├── schema/               # Zod request schemas
+│   │   ├── services/             # Business logic & Prisma queries
+│   │   ├── sockets/              # Chat, presence, and WebRTC socket events
+│   │   └── utils/                # AES-256-GCM crypto, JWT, logger, tag generator
 │   ├── package.json
 │   └── tsconfig.json
-├── docker-compose.yml            # Multi-container orchestration (Postgres + Redis + Backend)
+│
+├── docker-compose.yml            # Local container setup (PostgreSQL + Redis + App)
 └── README.md
 ```
 
 ---
 
-## ⚡ Quick Start
+## Getting Started
 
-### Option 1: Run with Docker Compose (Recommended)
+### Prerequisites
+- Node.js 18+ installed
+- PostgreSQL database (or Docker Desktop)
 
-Make sure Docker Desktop is running, then run:
+### Local Development
 
-```bash
-docker compose up --build
-```
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/abhi-v017/howudoin.git
+   cd howudoin
+   ```
 
-Services started:
-- **Backend API & WebSockets**: `http://localhost:5000`
-- **Interactive Diagnostics Playground**: `http://localhost:5000/`
-- **PostgreSQL**: `localhost:5433` (mapped from container 5432)
-- **Redis**: `localhost:6379`
-
----
-
-### Option 2: Run for Local Development
-
-1. **Start PostgreSQL and Redis** (e.g. via Docker):
+2. **Start Database & Services** (via Docker):
    ```bash
    docker compose up -d postgres redis
    ```
 
-2. **Navigate to backend and install dependencies**:
+3. **Configure & Start the Backend**:
    ```bash
    cd backend
    npm install
    ```
-
-3. **Initialize the Database Schema**:
+   Create `backend/.env`:
+   ```env
+   PORT=5000
+   DATABASE_URL="postgresql://chatapp_user:chatapp_password@localhost:5433/chatapp_db?schema=public"
+   JWT_SECRET="your-super-secret-jwt-key"
+   MESSAGE_ENCRYPTION_KEY="your-32-char-aes-encryption-key"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   NODE_ENV="development"
+   ```
+   Push schema and run:
    ```bash
    npx prisma db push
-   ```
-   *(Optional: Run `npx prisma studio` to view your database in a browser GUI)*
-
-4. **Start the Backend Server**:
-   ```bash
    npm run dev
    ```
 
-5. **Start the Next.js Frontend Server**:
-   Open a new terminal:
+4. **Configure & Start the Frontend**:
    ```bash
-   cd frontend
+   cd ../frontend
+   npm install
+   ```
+   Create `frontend/.env.local`:
+   ```env
+   NEXT_PUBLIC_API_URL="http://localhost:5000/api/v1"
+   NEXT_PUBLIC_SOCKET_URL="http://localhost:5000"
+   NEXT_PUBLIC_GOOGLE_CLIENT_ID="your-google-client-id"
+   ```
+   Start the dev server:
+   ```bash
    npm run dev
    ```
-   Visit **`http://localhost:3000`** to experience the sleek glassmorphic chat application!
+   Visit `http://localhost:3000` in your browser.
 
-6. **Run the Backend Verification Suite**:
-   ```bash
-   cd backend
-   npm test
+---
+
+## Production Deployment (100% Free)
+
+### 1. Database — [Neon.tech](https://neon.tech)
+1. Create a free project on Neon and copy your connection string:
+   ```text
+   postgresql://<user>:<password>@<ep-name>.neon.tech/neondb?sslmode=require
    ```
 
----
+### 2. Backend — [Render.com](https://render.com)
+1. Create a new **Web Service** connected to your repository.
+2. Settings:
+   - **Root Directory**: `backend`
+   - **Build Command**: `npm install --include=dev && npm run build && npx prisma db push`
+   - **Start Command**: `npm start`
+3. Environment Variables:
+   - `DATABASE_URL`: *(Your Neon PostgreSQL connection string)*
+   - `JWT_SECRET`: *(32-char random string)*
+   - `MESSAGE_ENCRYPTION_KEY`: *(32-char random string)*
+   - `GOOGLE_CLIENT_ID`: *(Your Google OAuth client ID)*
+   - `NODE_ENV`: `production`
 
-## 🛠️ Testing Dashboard
+### 3. Keep Backend Awake 24/7 (Prevent Render Sleep)
+Render free services spin down after 15 minutes of inactivity. The backend includes a lightweight 2-byte keep-alive endpoint: `GET /ping`.
+- Set up a free monitor on **[UptimeRobot](https://uptimerobot.com)**:
+  - **Monitor Type**: `HTTP(s)`
+  - **URL**: `https://<your-render-app>.onrender.com/ping`
+  - **Interval**: `Every 10 minutes`
 
-Visit **`http://localhost:5000/`** in your browser.
-
-- **Latency Meter**: Displays live roundtrip response time (ms) to the API.
-- **Service Indicators**: Live status of API, PostgreSQL, Redis, and WebSocket connections.
-- **Quick Anonymous User Generation**: Click "Generate Random Anonymous User" to obtain an identity (e.g. `Shadow#4829`) and JWT token.
-- **Multi-Tab Chat Testing**: Open `http://localhost:5000/` in two separate browser tabs to test realtime messaging, typing indicators, and WebRTC call ringing between two anonymous users!
-
----
-
-## 📡 API Reference Overview (`/api/v1`)
-
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/api/v1/auth/register` | Register anonymous user (`username`, `password`) | No |
-| `POST` | `/api/v1/auth/login` | Login with `username` / `username#tag` and `password` | No |
-| `GET` | `/api/v1/auth/me` | Fetch current user profile | Yes |
-| `GET` | `/api/v1/users/search?query=...` | Search users by name or `username#tag` | Yes |
-| `PATCH` | `/api/v1/users/profile` | Update bio, avatar, or theme | Yes |
-| `GET` | `/api/v1/conversations` | List user's conversations with latest message | Yes |
-| `POST` | `/api/v1/conversations/direct` | Start or get 1-on-1 direct conversation | Yes |
-| `POST` | `/api/v1/conversations/group` | Create group chat | Yes |
-| `POST` | `/api/v1/messages` | Send a message (text or media) | Yes |
-| `GET` | `/api/v1/messages/:conversationId` | Get cursor-paginated messages | Yes |
-| `POST` | `/api/v1/media/upload` | Upload image, audio, video, or document | Yes |
-| `GET` | `/api/v1/media/:filename` | Stream media (supports Range requests) | No |
-| `GET` | `/api/v1/system/ping` | Latency ping endpoint | No |
-| `GET` | `/api/v1/system/health` | Service health & latency stats | No |
+### 4. Frontend — [Vercel](https://vercel.com)
+1. Import your repository into Vercel.
+2. Set **Root Directory** to `frontend`.
+3. Add Environment Variables:
+   - `NEXT_PUBLIC_API_URL`: `https://<your-render-app>.onrender.com/api/v1`
+   - `NEXT_PUBLIC_SOCKET_URL`: `https://<your-render-app>.onrender.com`
+   - `NEXT_PUBLIC_GOOGLE_CLIENT_ID`: `your-google-client-id`
+4. Click **Deploy**.
 
 ---
 
-## 🔌 WebSocket Events Contract
+## Android App Setup (PWA & APK)
 
-### Chat Events:
-- `conversation:join` (`conversationId`): Join a chat room.
-- `conversation:leave` (`conversationId`): Leave a chat room.
-- `message:send` (`{ conversationId, content, type, mediaUrl }`): Send a message.
-- `message:new`: Broadcasted to conversation members.
-- `typing:start` / `typing:stop`: Broadcasted typing indicators.
-- `message:read`: Broadcasted read receipts.
+- **Direct Install (No App Store needed)**: Open your live site in Chrome on Android &rarr; tap the three dots &rarr; tap **"Install app"**. It installs as a full-screen, standalone app on your home screen.
+- **Generate Standalone APK**: Paste your live Vercel URL into **[PWABuilder](https://www.pwabuilder.com)** and click **"Package for Android"** to download an installable `.apk` file ready to share with friends.
 
-### WebRTC Signaling Events:
-- `call:initiate` (`{ conversationId, receiverId, callType }`): Initiates call.
-- `call:incoming`: Delivers incoming call to receiver.
-- `call:accept` / `call:reject`: Answers or declines call.
-- `call:signal` (`{ targetUserId, signal }`): Exchanges SDP offer, answer, and ICE candidates.
-- `call:end`: Terminates active call.
+---
+
+## Security Specifications
+
+- **Messages**: Encrypted at rest using **AES-256-GCM** with authenticated verification tags.
+- **Passwords**: Salted and hashed with **bcrypt** (10 rounds).
+- **Calls**: Peer-to-peer WebRTC voice/video with standard **DTLS-SRTP** encryption.
+- **Privacy**: No personal photos or real names are fetched or stored from third-party OAuth providers.
+
+---
+
+## License
+
+This project is open-source and available under the [MIT License](LICENSE).
